@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Проверка погоды для маршрута</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1>Погода на маршруте</h1>
+            <p>Введите начальный и конечный пункт, чтобы узнать прогноз.</p>
+            <form action="/" method="post">
+                <div class="form-group">
+                    <label for="start_city">Начальный пункт:</label>
+                    <input type="text" id="start_city" name="start_city" placeholder="Введите город" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_city">Конечный пункт:</label>
+                    <input type="text" id="end_city" name="end_city" placeholder="Введите город" required>
+                </div>
+                <button type="submit" class="btn">Проверить погоду</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

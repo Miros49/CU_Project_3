@@ -1,0 +1,108 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1f1f1f; /* Тёмный фон */
+    color: #f5f5f5; /* Цвет текста для тёмной темы */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Основной контейнер */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #181818; /* Тёмный фон контейнера */
+}
+
+/* Стиль для формы */
+.form-box {
+    background-color: #2c2c2c; /* Тёмный фон формы */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3); /* Добавим немного тени */
+    width: 400px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #f5f5f5; /* Белый цвет заголовка */
+}
+
+p {
+    font-size: 14px;
+    color: #b0b0b0; /* Светло-серый цвет для подзаголовка */
+    margin-bottom: 30px;
+}
+
+/* Стиль для группы ввода */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    font-size: 14px;
+    color: #f5f5f5; /* Белый цвет для меток */
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #444444; /* Тёмно-серый цвет рамки */
+    border-radius: 5px;
+    font-size: 14px;
+    color: #ffffff; /* Белый цвет текста */
+    background-color: #333333; /* Тёмный фон поля ввода */
+    transition: border 0.3s;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border: 1px solid #00adb5; /* Бирюзовая рамка при фокусе */
+    background-color: #444444; /* Фон чуть светлее при фокусе */
+}
+
+/* Кнопка отправки */
+.btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #00adb5; /* Яркий бирюзовый цвет кнопки */
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #008b93; /* Темнее при наведении */
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 480px) {
+    .form-box {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}

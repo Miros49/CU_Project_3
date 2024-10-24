@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты прогноза погоды</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1f1f1f;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #2c2c2c;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: left;
+            color: #f5f5f5;
+            margin-bottom: 30px;
+        }
+
+        .result-block {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .city-result {
+            display: block;
+            background-color: #3c3c3c;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .city-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #00adb5;
+        }
+
+        .weather-status {
+            font-size: 18px;
+            color: #f5f5f5;
+        }
+
+        .weather-value {
+            font-weight: 600; /* Слегка жирный шрифт */
+        }
+
+        .weather-value.good {
+            color: #4caf50;
+        }
+
+        .weather-value.bad {
+            color: #e74c3c;
+        }
+
+        .button {
+            display: block;
+            padding: 10px 0;
+            background-color: #00adb5;
+            color: #f5f5f5;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .button:hover {
+            background-color: #008b93;
+        }
+
+        @media (max-width: 600px) {
+            .city-result {
+                width: 100%;
+            }
+
+            .city-name {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Результаты прогноза погоды</h1>
+
+        <div class="result-block">
+            <div class="city-result">
+                <span class="city-name">{{ start_city }}</span>
+                <div class="weather-status">
+                    <span>Погодные условия:</span>
+                    <span class="weather-value {% if start_condition == 'bad' %}bad{% else %}good{% endif %}">
+                        {% if start_condition == 'bad' %}
+                            неблагоприятные
+                        {% else %}
+                            хорошие
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-block">
+            <div class="city-result">
+                <span class="city-name">{{ end_city }}</span>
+                <div class="weather-status">
+                    <span>Погодные условия:</span>
+                    <span class="weather-value {% if end_condition == 'bad' %}bad{% else %}good{% endif %}">
+                        {% if end_condition == 'bad' %}
+                            неблагоприятные
+                        {% else %}
+                            хорошие
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <a href="/" class="button">Назад</a>
+    </div>
+</body>
+</html>
