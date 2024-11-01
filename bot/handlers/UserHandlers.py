@@ -125,6 +125,9 @@ async def interval_selected(callback: CallbackQuery, state: FSMContext):
         for idx, forecast in enumerate(intermediate_forecasts, start=1):
             forecast_message += f"Точка {idx}: {forecast['DailyForecasts'][0]['Day']['IconPhrase']}\n"
 
+    forecast_message += ("\n\n<i>Для более подробной информации можете посетить "
+                         "<a href='http://127.0.0.1:5000'>наш сайт</a></i>")
+
     await callback.message.answer(forecast_message)
 
     await state.clear()
