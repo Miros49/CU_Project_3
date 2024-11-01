@@ -23,9 +23,9 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
             border-radius: 10px;
             display: flex;
-            flex-direction: column; /* Размещаем элементы по вертикали */
+            flex-direction: column;
             justify-content: space-between;
-            height: 100vh; /* Занимаем всю высоту экрана */
+            min-height: 100vh;
         }
 
         h1 {
@@ -71,50 +71,89 @@
             font-weight: 600;
             transition: background-color 0.3s ease;
             width: 100%;
-            margin-top: auto; /* Кнопка расположена внизу */
+            margin-top: auto;
         }
 
         .button:hover {
             background-color: #008b93;
         }
+
+        .dash-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Прогноз погоды для {{ city }}</h1>
+<div class="container">
+    <h1>Прогноз погоды для {{ city }}</h1>
 
-        <div class="forecast-block">
-            <span class="city-name">{{ city }}</span>
-            <div class="forecast-info">
-                <div class="weather-detail">
-                    <span class="detail-label">Текущая температура:</span> {{ current_temperature }}°C
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Макс. температура:</span> {{ temperature_max }}°C
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Мин. температура:</span> {{ temperature_min }}°C
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Скорость ветра:</span> {{ wind_speed }} км/ч
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Вероятность осадков:</span> {{ precipitation_probability }}%
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Интенсивность осадков:</span> {{ precipitation_intensity }}
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Тип осадков:</span> {{ precipitation_type }}
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-label">Общие условия:</span>
-                    <span class="weather-value">{{ translated_weather }}</span>
-                </div>
+    <div class="forecast-navigation">
+        {% if day_index > 0 %}
+            <a href="{{ url_for('weather.get_weather', city=city, days=days, day_index=day_index-1) }}"
+               class="nav-button">⟵ Предыдущий день</a>
+        {% endif %}
+        <span>Прогноз на {{ date }}</span>
+        {% if day_index < days - 1 %}
+            <a href="{{ url_for('weather.get_weather', city=city, days=days, day_index=day_index+1) }}"
+               class="nav-button">Следующий день ⟶</a>
+        {% endif %}
+    </div>
+
+    <div class="forecast-block">
+        <span class="city-name">{{ city }}</span>
+        <div class="forecast-info">
+            <div class="weather-detail">
+                <span class="detail-label">Текущая температура:</span> {{ current_temperature }}°C
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Макс. температура:</span> {{ temperature_max }}°C
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Мин. температура:</span> {{ temperature_min }}°C
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Ощущается как:</span> {{ real_feel }}°C
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Скорость ветра:</span> {{ wind_speed }} км/ч
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Влажность днём (мин/сред/макс):</span> {{ day_humidity.Minimum }}%
+                / {{ day_humidity.Average }}% / {{ day_humidity.Maximum }}%
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Влажность ночью (мин/сред/макс):</span> {{ night_humidity.Minimum }}%
+                / {{ night_humidity.Average }}% / {{ night_humidity.Maximum }}%
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Облачность:</span> {{ cloud_cover }}%
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Вероятность осадков:</span> {{ precipitation_probability }}%
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Тип осадков:</span> {{ precipitation_type }}
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Общие условия:</span> <span class="weather-value">{{ icon_phrase }}</span>
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Восход:</span> {{ sunrise }}
+            </div>
+            <div class="weather-detail">
+                <span class="detail-label">Закат:</span> {{ sunset }}
             </div>
         </div>
-
-        <a href="/" class="button">Назад</a>
     </div>
+
+    <iframe src="/dash/" class="dash-iframe"></iframe>
+
+    <a href="/" class="button">Назад</a>
+</div>
 </body>
 </html>

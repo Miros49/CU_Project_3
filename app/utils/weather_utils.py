@@ -1,6 +1,8 @@
 from flask import jsonify
-from services.weather_service import get_weather_by_location
-from services.geocoding_service import get_coordinates_by_city
+from datetime import datetime
+
+from app.services import get_weather_by_location
+from app.services import get_coordinates_by_city
 
 
 def get_weather_data(city_name):
@@ -61,7 +63,13 @@ def translate_weather(icon_phrase):
         "Sleet": "Мокрый снег",
         "Light": "Лёгкие",
         "None": "Нет",
-        "Partly sunny": "Облачно с прояснениями"
+        "Partly sunny": "Облачно с прояснениями",
+        "Partly sunny w/ showers": "Облачно с прояснениями с дождями"
     }
 
     return translations.get(icon_phrase, icon_phrase)
+
+
+def extract_time(date_str: str) -> str:
+    date_time_obj = datetime.fromisoformat(date_str)
+    return date_time_obj.strftime("%H:%M")

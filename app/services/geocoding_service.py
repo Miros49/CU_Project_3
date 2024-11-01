@@ -1,11 +1,28 @@
+import json
+import redis
 import requests
-from core.config import Config
+
+from app.core.config import Config
+
+redis_client = redis.Redis(
+    host=Config.REDIS_HOST,
+    port=Config.REDIS_PORT,
+    db=Config.REDIS_DB,
+    decode_responses=True
+)
 
 
-def get_coordinates_by_city(city_name: str = 'Moscow'):
+def get_coordinates_by_city(city_name):
     """
-    Получение широты и долготы города с использованием PositionStack API.
+    Получение координат города с кэшированием.
     """
+    cache_key = f"coordinates:{city_name.lower()}"
+    coordinates = redis_client.get(cache_key)
+
+    if coordinates:
+        print("City coordinates retrieved from cache")
+        return json.loads(coordinates)
+
     api_key = Config.POSITIONSTACK_API_KEY
     url = "http://api.positionstack.com/v1/forward"
     params = {
@@ -15,19 +32,18 @@ def get_coordinates_by_city(city_name: str = 'Moscow'):
     }
 
     response = requests.get(url, params=params)
-
-    # Проверка статуса ответа и вывод ошибки
     if response.status_code != 200:
         print(f"Ошибка запроса. Статус: {response.status_code}, Текст ошибки: {response.text}")
         return None
 
-    # Проверка, что в ответе есть данные
     data = response.json().get('data')
     if not data:
         print("Не удалось найти данные для указанного города.")
         return None
 
-    return {
+    coordinates = {
         'lat': data[0]['latitude'],
         'lon': data[0]['longitude']
     }
+    redis_client.setex(cache_key, 86400, json.dumps(coordinates))  # Кэширование на 24 часа
+    return coordinates

@@ -1,10 +1,22 @@
-from flask import Flask
+import sys
+import asyncio
+import locale
+
+from app import flask_app, run_flask
 from app.routes import weather_blueprint, errors_blueprint
+from bot import run_bot
 
-app = Flask(__name__, template_folder='app/templates', static_folder='app/static', static_url_path='/static')
+locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
+sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stderr = open(sys.stderr.fileno(), mode='w', encoding='utf-8', buffering=1)
 
-app.register_blueprint(weather_blueprint)
-app.register_blueprint(errors_blueprint)
+flask_app.register_blueprint(weather_blueprint)
+flask_app.register_blueprint(errors_blueprint)
+
+
+async def main():
+    await asyncio.gather(run_flask(), run_bot())
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    asyncio.run(main())

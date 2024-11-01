@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Результаты прогноза погоды</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -61,7 +63,7 @@
         }
 
         .weather-value {
-            font-weight: 600; /* Слегка жирный шрифт */
+            font-weight: 600;
         }
 
         .weather-value.good {
@@ -100,43 +102,139 @@
                 margin-bottom: 10px;
             }
         }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Результаты прогноза погоды</h1>
+<div class="container">
+    <h1>Результаты прогноза погоды</h1>
 
+    <!-- Прогноз для начального пункта -->
+    <div class="result-block">
+        <div class="city-result">
+            <span class="city-name">{{ start_city }}</span>
+            <div class="weather-status">
+                <span>Погодные условия:</span>
+                <span class="weather-value {% if start_condition == 'bad' %}bad{% else %}good{% endif %}">
+                    {% if start_condition == 'bad' %}
+                        неблагоприятные
+                    {% else %}
+                        благоприятные
+                    {% endif %}
+                </span>
+            </div>
+            <div class="weather-status">
+                <span>Прогноз:</span>
+                <span class="weather-value">{{ start_forecast['Day']['IconPhrase'] }}</span>
+            </div>
+            <a href="{{ url_for('weather.get_weather', city=start_city) }}" class="button">Детали погоды</a>
+        </div>
+    </div>
+
+    <!-- Прогноз для промежуточных точек -->
+    {% for waypoint in waypoints %}
         <div class="result-block">
             <div class="city-result">
-                <span class="city-name">{{ start_city }}</span>
+                <span class="city-name">{{ waypoint.city }}</span>
                 <div class="weather-status">
                     <span>Погодные условия:</span>
-                    <span class="weather-value {% if start_condition == 'bad' %}bad{% else %}good{% endif %}">
-                        {% if start_condition == 'bad' %}
+                    <span class="weather-value {% if waypoint.condition == 'bad' %}bad{% else %}good{% endif %}">
+                        {% if waypoint.condition == 'bad' %}
                             неблагоприятные
                         {% else %}
-                            хорошие
+                            благоприятные
                         {% endif %}
                     </span>
                 </div>
-            </div>
-        </div>
-
-        <div class="result-block">
-            <div class="city-result">
-                <span class="city-name">{{ end_city }}</span>
                 <div class="weather-status">
-                    <span>Погодные условия:</span>
-                    <span class="weather-value {% if end_condition == 'bad' %}bad{% else %}good{% endif %}">
-                        {% if end_condition == 'bad' %}
-                            неблагоприятные
-                        {% else %}
-                            хорошие
-                        {% endif %}
-                    </span>
+                    <span>Прогноз:</span>
+                    <span class="weather-value">{{ waypoint.forecast['Day']['IconPhrase'] }}</span>
                 </div>
+                <a href="{{ url_for('weather.get_weather', city=waypoint.city) }}" class="button">Детали погоды</a>
             </div>
         </div>
+    {% endfor %}
+
+    <!-- Прогноз для конечного пункта -->
+    <div class="result-block">
+        <div class="city-result">
+            <span class="city-name">{{ end_city }}</span>
+            <div class="weather-status">
+                <span>Погодные условия:</span>
+                <span class="weather-value {% if end_condition == 'bad' %}bad{% else %}good{% endif %}">
+                    {% if end_condition == 'bad' %}
+                        неблагоприятные
+                    {% else %}
+                        благоприятные
+                    {% endif %}
+                </span>
+            </div>
+            <div class="weather-status">
+                <span>Прогноз:</span>
+                <span class="weather-value">{{ end_forecast['Day']['IconPhrase'] }}</span>
+            </div>
+            <a href="{{ url_for('weather.get_weather', city=end_city) }}" class="button">Детали погоды</a>
+        </div>
+        <div id="map"></div>
+
+        <!-- JavaScript для отображения карты -->
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script>
+            // Инициализация карты
+            var map = L.map('map').setView([55.751244, 37.618423], 5);
+
+            // Подключаем слой OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Данные о маршруте, переданные из backend
+            const routeData = {
+                start: [{{ start_coordinates['lat'] }}, {{ start_coordinates['lon'] }}],
+                end: [{{ end_coordinates['lat'] }}, {{ end_coordinates['lon'] }}],
+                waypoints: [
+                    {% for waypoint in waypoints %}
+                        {
+                            coord: [{{ waypoint.coord['lat'] }}, {{ waypoint.coord['lon'] }}],
+                            city: "{{ waypoint.city }}",
+                            condition: "{{ waypoint.condition }}",
+                            iconPhrase: "{{ waypoint.forecast['Day']['IconPhrase'] }}"
+                        },
+                    {% endfor %}
+                ]
+            };
+
+            // Функция для добавления маркера с всплывающей подсказкой
+            function addMarker(coord, city, weatherCondition, iconPhrase) {
+                var marker = L.marker(coord).addTo(map);
+                marker.bindPopup(`<b>${city}</b><br>Условия: ${weatherCondition}<br>Прогноз: ${iconPhrase}`);
+            }
+
+            // Добавляем маркер начальной точки
+            addMarker(routeData.start, "{{ start_city }}", "{{ start_condition }}", "{{ start_forecast['Day']['IconPhrase'] }}");
+
+            // Добавляем маркеры промежуточных точек
+            routeData.waypoints.forEach(waypoint => {
+                addMarker(waypoint.coord, waypoint.city, waypoint.condition, waypoint.iconPhrase);
+            });
+
+            // Добавляем маркер конечной точки
+            addMarker(routeData.end, "{{ end_city }}", "{{ end_condition }}", "{{ end_forecast['Day']['IconPhrase'] }}");
+
+            // Строим маршрут
+            var routeCoordinates = [routeData.start, ...routeData.waypoints.map(wp => wp.coord), routeData.end];
+            var routeLine = L.polyline(routeCoordinates, {color: 'blue'}).addTo(map);
+
+            // Масштабируем карту, чтобы показать весь маршрут
+            map.fitBounds(routeLine.getBounds());
+        </script>
 
         <a href="/" class="button">Назад</a>
     </div>

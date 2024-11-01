@@ -8,22 +8,44 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <div class="form-box">
-            <h1>Погода на маршруте</h1>
-            <p>Введите начальный и конечный пункт, чтобы узнать прогноз.</p>
-            <form action="/" method="post">
-                <div class="form-group">
-                    <label for="start_city">Начальный пункт:</label>
-                    <input type="text" id="start_city" name="start_city" placeholder="Введите город" required>
-                </div>
-                <div class="form-group">
-                    <label for="end_city">Конечный пункт:</label>
-                    <input type="text" id="end_city" name="end_city" placeholder="Введите город" required>
-                </div>
-                <button type="submit" class="btn">Проверить погоду</button>
-            </form>
-        </div>
+<div class="container">
+    <div class="form-box">
+        <h1>Погода на маршруте</h1>
+        <p>Введите начальный и конечный пункт, чтобы узнать прогноз.</p>
+        <form action="/" method="post" id="route-form">
+            <div class="form-group">
+                <label for="start_city">Начальный пункт:</label>
+                <input type="text" id="start_city" name="start_city" placeholder="Введите город" required>
+            </div>
+
+            <!-- Контейнер для промежуточных точек -->
+            <div id="waypoints-container"></div>
+
+            <!-- Кнопка для добавления промежуточных точек -->
+            <button type="button" id="add-waypoint" class="btn">Добавить промежуточную точку</button>
+
+            <div class="form-group">
+                <label for="end_city">Конечный пункт:</label>
+                <input type="text" id="end_city" name="end_city" placeholder="Введите город" required>
+            </div>
+
+            <button type="submit" class="btn">Проверить погоду</button>
+        </form>
     </div>
+</div>
+
+<script>
+    document.getElementById('add-waypoint').addEventListener('click', function () {
+        const waypointsContainer = document.getElementById('waypoints-container');
+        const waypointIndex = waypointsContainer.childElementCount + 1;
+        const waypointDiv = document.createElement('div');
+        waypointDiv.className = 'form-group';
+        waypointDiv.innerHTML = `
+                <label for="waypoint_${waypointIndex}">Промежуточная точка ${waypointIndex}:</label>
+                <input type="text" id="waypoint_${waypointIndex}" name="waypoints[]" placeholder="Введите город" required>
+            `;
+        waypointsContainer.appendChild(waypointDiv);
+    });
+</script>
 </body>
 </html>
