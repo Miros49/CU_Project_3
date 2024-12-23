@@ -1,0 +1,44 @@
+.result-block {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.city-result {
+    display: block;
+    background-color: #3c3c3c;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.city-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: #00adb5;
+}
+
+.weather-status {
+    font-size: 18px;
+    color: #f5f5f5;
+}
+
+.weather-value {
+    font-weight: 600;
+}
+
+.weather-value.good {
+    color: #4caf50;
+}
+
+.weather-value.bad {
+    color: #e74c3c;
+}
+
+#map {
+    height: 400px;
+    width: 100%;
+    margin: 20px 0;
+    border-radius: 8px;
+}

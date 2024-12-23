@@ -77,7 +77,7 @@ def check_route_weather():
         )
         end_condition = "неблагоприятные" if end_condition == 'bad' else "благоприятные"
 
-        # Рендерим шаблон с результатами прогноза для каждого пункта маршрута
+        # шаблон с результатами прогноза для каждого пункта маршрута
         return render_template(
             'route_weather_results.html',
             start_city=start_city,
@@ -92,10 +92,6 @@ def check_route_weather():
         )
 
     return render_template('index.html')
-
-
-from flask import current_app
-import datetime
 
 
 @weather_blueprint.route('/get_weather', methods=['GET'])
@@ -227,6 +223,7 @@ def check_route_weather_ajax():
     Эндпоинт для проверки погодных условий маршрута через AJAX.
     Возвращает JSON с погодными условиями для начальной и конечной точек.
     """
+    print(1)
     start_city = request.json.get('start_city')
     end_city = request.json.get('end_city')
 
